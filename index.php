@@ -58,10 +58,15 @@ elseif	($action == 'viewRandomAlbum')	viewRandomAlbum();
 elseif	($action == 'viewRandomTrack')	viewRandomTrack();
 elseif	($action == 'viewRandomFile')	viewRandomFile();
 elseif	($action == 'viewYear')			viewYear();
+elseif	($action == 'viewGenre')			viewGenre();
 elseif	($action == 'viewDR')			viewDR();
 elseif	($action == 'viewNew')			viewNew();
 elseif	($action == 'viewPopular')		viewPopular();
+<<<<<<< HEAD
 elseif	($action == 'Report')			Report();
+=======
+elseif	($action == 'viewRecentlyPlayed')		viewRecentlyPlayed();
+>>>>>>> 7fe95555bc96a96189f44f06ea93c0ee31d74d1a
 else	message(__FILE__, __LINE__, 'error', '[b]Unsupported input value for[/b][br]action');
 exit();
 
@@ -839,7 +844,8 @@ function view2() {
 			$genre = mysqli_fetch_assoc($query);
 			
 			if ($genreAct != $genrePrev){
-				echo '<div class="decade">' . html($genre['genre']) . '</div>';
+				echo '<span class="nav_tree"><a href="index.php?action=view2&order=artist&sort=asc&genre_id=' . $genreAct. '">' . html($genre['genre']) . '</a></span>';
+				//echo '<div class="decade">' . html($genre['genre']) . '</div>';
 			}
 		}
 		draw_tile($size,$album_m,$album_m['allDiscs']);
@@ -900,7 +906,10 @@ if ($filter == 'whole' && !$genre_id && !$year && !$isVA) {
 	<td>Album&nbsp;</td>
 	<td class="time pl-genre">Genre&nbsp;</td>
 	<td class="icon"></td><!-- star -->
-	<td align="right" class="time">Time</td>
+	<?php if ($cfg['show_DR']){ ?>
+	<td class="time pl-tdr">DR</td>
+	<?php } ?>
+	<td align="right" class="time time_w">Time</td>
 	<td class="space right"></td>
 </tr>
 
@@ -910,7 +919,7 @@ if ($filter == 'whole' && !$genre_id && !$year && !$isVA) {
 	$search_string = get('artist');
 	
 	$queryTA = mysqli_query($db,'SELECT * FROM
-	(SELECT track.artist as track_artist, track.title, track.featuring, track.album_id, track.track_id as tid, track.miliseconds, track.number, track.relative_file, track.genre, album.image_id, album.album, album.artist
+	(SELECT track.artist as track_artist, track.title, track.featuring, track.album_id, track.track_id as tid, track.miliseconds, track.number, track.relative_file, track.genre, track.dr, album.image_id, album.album, album.artist
 	FROM track
 	INNER JOIN album ON track.album_id = album.album_id '
 	. $filter_queryTA .
@@ -1002,6 +1011,15 @@ if ($filter == 'whole' && !$genre_id && !$year && !$isVA) {
 		<i class="fa fa-star<?php if (!$isFavorite) echo '-o'; ?> fa-fw" id="favorite_star-<?php echo $tid; ?>"></i>
 		</span>
 	</td>
+	
+	<?php if ($cfg['show_DR']){ ?>
+	<td class="pl-tdr">
+	<?php
+		$tdr = ($track['dr'] === NULL ? '-' : $track['dr']);
+		echo $tdr;
+	?>
+	</td>
+	<?php } ?>
 	
 	<td align="right"><?php echo formattedTime($track['miliseconds']); ?></td>
 	<td></td>
@@ -1107,7 +1125,10 @@ if ($filter == 'whole' && !$genre_id && !$year && !$isVA) {
 	<td>Album&nbsp;</td>
 	<td class="time pl-genre">Genre&nbsp;</td>
 	<td class="icon"></td><!-- star -->
-	<td align="right" class="time">Time</td>
+	<?php if ($cfg['show_DR']){ ?>
+	<td class="time pl-tdr">DR</td>
+	<?php } ?>
+	<td align="right" class="time time_w">Time</td>
 	<td class="space right"></td>
 </tr>
 
@@ -1116,7 +1137,7 @@ if ($filter == 'whole' && !$genre_id && !$year && !$isVA) {
 	$FAV_ids = '';
 	$search_string = get('artist');
 	$filter_query = str_replace('artist ','track.artist ',$filter_query);
-	$queryFav = mysqli_query($db, 'SELECT track.artist as track_artist, track.title, track.featuring, track.album_id, track.track_id as tid, track.relative_file, track.miliseconds, track.number, track.genre, favoriteitem.favorite_id, album.album
+	$queryFav = mysqli_query($db, 'SELECT track.artist as track_artist, track.title, track.featuring, track.album_id, track.track_id as tid, track.relative_file, track.miliseconds, track.number, track.genre, track.dr, favoriteitem.favorite_id, album.album
 		FROM track
 		INNER JOIN favoriteitem ON track.track_id = favoriteitem.track_id 
 		LEFT JOIN album ON track.album_id = album.album_id '
@@ -1198,6 +1219,15 @@ if ($filter == 'whole' && !$genre_id && !$year && !$isVA) {
 		<i class="fa fa-star<?php if (!$isFavorite) echo '-o'; ?> fa-fw" id="favorite_star-<?php echo $tid; ?>_fav"></i>
 		</span>
 	</td>
+	
+	<?php if ($cfg['show_DR']){ ?>
+	<td class="pl-tdr">
+	<?php
+		$tdr = ($track['dr'] === NULL ? '-' : $track['dr']);
+		echo $tdr;
+	?>
+	</td>
+	<?php } ?>
 	
 	<td align="right"><?php echo formattedTime($track['miliseconds']); ?></td>
 	<td></td>
@@ -2167,6 +2197,9 @@ function view3all() {
 	<td><a <?php echo ($order_bitmap_album == '<span class="typcn"></span>') ? '':'class="sort_selected"';?> href="<?php echo $url; ?>&amp;order=album&amp;sort=<?php echo $sort_album; ?>">Album&nbsp;<?php echo $order_bitmap_album; ?></a></td>
 	<td class="time pl-genre">Genre&nbsp;</td>
 	<td></td>
+	<?php if ($cfg['show_DR']){ ?>
+	<td class="time pl-tdr">DR</td>
+	<?php } ?>
 	<td align="right" class="time">Time</td>
 	<td class="space right"></td>
 </tr>
@@ -2177,7 +2210,7 @@ function view3all() {
 	//$query = mysqli_query($db, 'SELECT track.artist, track.title, track.number, track.featuring, track.album_id, track.track_id, track.miliseconds, track.relative_file, album.image_id, album.album FROM track, album ' . $filter_query . ' ' . $order_query);
 	
 	$q = 'SELECT * FROM
-	(SELECT track.artist as track_artist, track.title, track.featuring, track.album_id, track.track_id as tid, track.miliseconds, track.number, track.relative_file, track.genre, album.image_id, album.album, album.artist
+	(SELECT track.artist as track_artist, track.title, track.featuring, track.album_id, track.track_id as tid, track.miliseconds, track.number, track.relative_file, track.genre, track.dr, album.image_id, album.album, album.artist
 	FROM track
 	INNER JOIN album ON track.album_id = album.album_id '
 	. $filter_query . ' ' . $order_query .') as a
@@ -2268,6 +2301,15 @@ function view3all() {
 		<i class="fa fa-star<?php if (!$isFavorite) echo '-o'; ?> fa-fw" id="favorite_star-<?php echo $tid; ?>"></i>
 		</span>
 	</td>
+	
+	<?php if ($cfg['show_DR']){ ?>
+	<td class="pl-tdr">
+	<?php
+		$tdr = ($track['dr'] === NULL ? '-' : $track['dr']);
+		echo $tdr;
+	?>
+	</td>
+	<?php } ?>
 	
 	<td align="right"><?php echo formattedTime($track['miliseconds']); ?></td>
 	<td></td>
@@ -2681,8 +2723,7 @@ function viewYear() {
 	<td class="space left"></td>
 	<td width="80px"><a <?php echo ($order_bitmap_year == '<span class="typcn"></span>') ? '':'class="sort_selected"';?> href="index.php?action=viewYear&amp;sort=<?php echo $sort_year; ?>">Year&nbsp;<?php echo $order_bitmap_year; ?></a></td>	
 	<td align="left" class="bar">Graph</td>
-	<td align="center" width="130px">Disc counts</td>
-	<td class="right">&nbsp;</td>
+	<td align="center" width="130px">Disc counts&nbsp;</td>
 </tr>
 
 <?php
@@ -2712,7 +2753,7 @@ function viewYear() {
 	<td><a href="index.php?action=view2&amp;year=Unknown">Unknown</a></td>
 	<td class="bar" style="cursor: pointer;" onClick="window.location.href='<?php echo NJB_HOME_URL ?>index.php?action=view2&amp;year=Unknown';"><div class="out"><div id="yNULL" style="width: 0px;" class="in"></div></div></td>
 	<td align="center"><?php echo $album['counter']; ?> (<?php echo  round($album['counter'] / $all * 100, 1); ?>%)</td>
-	<td> </td>
+	
 	
 </tr>
 <?php	
@@ -2730,7 +2771,7 @@ function viewYear() {
 	<td><a href="index.php?action=view2&amp;year=<?php echo $album['year']; ?>"><?php echo $album['year']; ?></a></td>
 	<td class="bar" style="cursor: pointer;" onClick="window.location.href='<?php echo NJB_HOME_URL ?>index.php?action=view2&amp;year=<?php echo $album['year']; ?>';"><div class="out"><div id="y<?php echo $album['year']; ?>" style="width: 0px;" class="in"></div></div></td>
 	<td align="center"><?php echo $album['counter']; ?> (<?php echo  round($album['counter'] / $all * 100, 1); ?>%)</td>
-	<td> </td>
+	
 	
 </tr>
 <?php
@@ -2751,6 +2792,124 @@ function viewYear() {
 		
 		echo 'document.getElementById(\'y' . $album['year'] .'\').style.width="' . round($album['counter'] / $max * 200) . 'px";' . "\n";
 		//echo '$(\'#y'. $album['year'] .'\').transition({ width: \'' . round($album['counter'] / $max * 200) .  'px\', duration: 2000 });' . "\n";
+		}
+	echo '}' . "\n";
+	echo 'window.onload = function () {' . "\n";
+    echo 'setYearBar();' . "\n";
+	echo '};' . "\n";
+	echo '</script>' . "\n";
+	
+	require_once('include/footer.inc.php');
+}
+
+
+
+
+//  +------------------------------------------------------------------------+
+//  | View genre                                                             |
+//  +------------------------------------------------------------------------+
+function viewGenre() {
+	global $cfg, $db;
+	
+	authenticate('access_media');
+	
+	$sort = get('sort') == 'desc' ? 'desc' : 'asc';
+	
+	if ($sort == 'asc') {
+		$order_query = 'ORDER BY genre.genre';
+		$order_bitmap_genre = '<span class="fa fa-sort-alpha-asc"></span>';
+		$sort_genre = 'desc';
+	}
+	else {
+		// desc
+		$order_query = 'ORDER BY genre.genre DESC';
+		$order_bitmap_genre = '<span class="fa fa-sort-alpha-desc"></span>';
+		$sort_genre = 'asc';
+	}
+	
+	// formattedNavigator
+	$nav			= array();
+	$nav['name'][]	= 'Library';
+	$nav['url'][]	= 'index.php';
+	$nav['name'][]	= 'Genre';
+	require_once('include/header.inc.php');
+?>
+<table cellspacing="0" cellpadding="0" class="border">
+<tr class="header">
+	<td class="space left"></td>
+	<td style="width: 200px; max-width: 30%;"><a <?php echo ($order_bitmap_genre == '<span class="typcn"></span>') ? '':'class="sort_selected"';?> href="index.php?action=viewGenre&amp;sort=<?php echo $sort_genre; ?>">Genre&nbsp;<?php echo $order_bitmap_genre; ?></a></td>	
+	<td align="left" class="bar">Graph</td>
+	<td align="center" width="130px">Disc counts&nbsp;</td>
+	
+</tr>
+
+<?php
+	$query = mysqli_query($db, "SELECT genre.genre, genre.genre_id, count(album.album_id) AS albums
+		FROM genre
+		INNER JOIN album ON album.genre_id LIKE CONCAT( '%;', genre.genre_id, ';%' )
+		GROUP BY genre.genre
+		ORDER BY albums DESC");
+	$album = mysqli_fetch_assoc($query);
+	$max = $album['albums'];
+	
+	$query = mysqli_query($db, 'SELECT COUNT(discs) AS albums, SUM(discs) AS discs FROM album');
+	$album = mysqli_fetch_assoc($query);
+	$all = $album['albums'];
+	
+	$i=0;
+	$query = mysqli_query($db, "SELECT genre.genre, genre.genre_id as gid, count(album.album_id) AS albums
+		FROM genre
+		INNER JOIN album ON album.genre_id LIKE CONCAT( '%;', genre.genre_id, ';%' )
+		WHERE genre.genre = 'unknown genre'
+		GROUP BY genre.genre");
+	$album = mysqli_fetch_assoc($query);
+	$genreNULL = $album['albums'];
+	if ($genreNULL > 0) {
+?>
+<tr class="<?php echo ($i++ & 1) ? 'year' : 'year'; ?> mouseover">
+	<td></td>
+	<td><a href="index.php?action=view2&order=artist&sort=asc&genre_id=<?php echo $album['gid'] ?>">Unknown genre</a></td>
+	<td class="bar" style="cursor: pointer;" onClick="window.location.href='<?php echo NJB_HOME_URL ?>index.php?action=view2&order=artist&sort=asc&genre_id=<?php echo $album['gid'] ?>';"><div class="out"><div id="yNULL" style="width: 0px;" class="in"></div></div></td>
+	<td align="center"><?php echo $album['albums']; ?> (<?php echo  round($album['albums'] / $all * 100, 1); ?>%)</td>
+	
+	
+</tr>
+<?php	
+	}
+	$i=1;
+	$query = mysqli_query($db, "SELECT genre.genre, genre.genre_id as gid, count(album.album_id) AS albums
+		FROM genre
+		INNER JOIN album ON album.genre_id LIKE CONCAT( '%;', genre.genre_id, ';%' )
+		WHERE genre.genre <> 'unknown genre'
+		GROUP BY genre.genre " . $order_query);
+	while ($max && $album = mysqli_fetch_assoc($query)) {
+?>
+<tr class="<?php echo ($i++ & 1) ? 'year' : 'year'; ?> mouseover">
+	<td></td>
+	<td><a href="index.php?action=view2&order=artist&sort=asc&genre_id=<?php echo $album['gid'] ?>"><?php echo $album['genre']; ?></a></td>
+	<td class="bar" style="cursor: pointer;" onClick="window.location.href='<?php echo NJB_HOME_URL ?>index.php?action=view2&order=artist&sort=asc&genre_id=<?php echo $album['gid'] ?>';"><div class="out"><div id="y<?php echo $album['gid']; ?>" style="width: 0px;" class="in"></div></div></td>
+	<td align="center"><?php echo $album['albums']; ?> (<?php echo  round($album['albums'] / $all * 100, 1); ?>%)</td>
+
+	
+</tr>
+<?php
+	}
+	$query = mysqli_query($db, "SELECT genre.genre, genre.genre_id as gid, count(album.album_id) AS albums
+		FROM genre
+		INNER JOIN album ON album.genre_id LIKE CONCAT( '%;', genre.genre_id, ';%' )
+		WHERE genre.genre <> 'unknown genre'
+		GROUP BY genre.genre " . $order_query);
+		
+	echo '</table>' . "\n";
+	echo '<script type="text/javascript">' . "\n";
+	echo 'function setYearBar() {' . "\n";
+	if ($genreNULL>0) {
+	echo 'document.getElementById(\'yNULL\').style.width="' . round($genreNULL / $max * 200) . 'px";' . "\n";}
+	while ($max && $album = mysqli_fetch_assoc($query)) {
+	
+		
+		echo 'document.getElementById(\'y' . $album['gid'] .'\').style.width="' . round($album['albums'] / $max * 200) . 'px";' . "\n";
+		
 		}
 	echo '}' . "\n";
 	echo 'window.onload = function () {' . "\n";
@@ -2799,8 +2958,8 @@ function viewDR() {
 	<td class="space left"></td>
 	<td width="80px"><a <?php echo ($order_bitmap_dr == '<span class="typcn"></span>') ? '':'class="sort_selected"';?> href="index.php?action=viewDR&amp;sort=<?php echo $sort_dr; ?>">DR&nbsp;<?php echo $order_bitmap_dr; ?></a></td>	
 	<td align="left" class="bar">Graph</td>
-	<td align="center" width="130px">Disc counts</td>
-	<td class="right">&nbsp;</td>
+	<td align="center" width="130px">Disc counts&nbsp;</td>
+	
 </tr>
 
 <?php
@@ -2830,7 +2989,7 @@ function viewDR() {
 	<td><a href="index.php?action=view2&amp;dr=Unknown">Unknown</a></td>
 	<td class="bar" style="cursor: pointer;" onClick="window.location.href='<?php echo NJB_HOME_URL ?>index.php?action=view2&amp;dr=Unknown';"><div class="out"><div id="drNULL" style="width: 0px;" class="in"></div></div></td>
 	<td align="center"><?php echo $album['counter']; ?> (<?php echo  round($album['counter'] / $all * 100, 1); ?>%)</td>
-	<td> </td>
+	
 	
 </tr>
 <?php	
@@ -2848,7 +3007,7 @@ function viewDR() {
 	<td><a href="index.php?action=view2&amp;dr=<?php echo $album['album_dr']; ?>"><?php echo $album['album_dr']; ?></a></td>
 	<td class="bar" style="cursor: pointer;" onClick="window.location.href='<?php echo NJB_HOME_URL ?>index.php?action=view2&amp;dr=<?php echo $album['album_dr']; ?>';"><div class="out"><div id="dr<?php echo $album['album_dr']; ?>" style="width: 0px;" class="in"></div></div></td>
 	<td align="center"><?php echo $album['counter']; ?> (<?php echo  round($album['counter'] / $all * 100, 1); ?>%)</td>
-	<td> </td>
+	
 	
 </tr>
 <?php
@@ -3014,7 +3173,7 @@ if ($cfg['show_last_played'] == true) {
 	if ($rows > 0) {
 	?>
 
-	<h1>&nbsp;Recently played albums</h1>
+	<h1>&nbsp;Recently played albums <a href="index.php?action=viewRecentlyPlayed">(more...)</a></h1>
 	<div class="full">
 	<?php
 			while ( $album = mysqli_fetch_assoc ( $query ) ) {
@@ -3097,7 +3256,7 @@ function viewNew() {
 	$i = 0;
 	$tsStart = get('tsStart');
 	$tsEnd = get('tsEnd');
-	$page = get('page');
+	$page = (get('page') ? get('page') : 1);
 	$max_item_per_page = $cfg['max_items_per_page'];
 	$where = 'album_add_time';
 	if (isSet($tsStart) && isSet($tsEnd)) {
@@ -3421,4 +3580,116 @@ function viewPopular() {
 <?php
 	require_once('include/footer.inc.php');
 }
+
+
+
+
+//  +------------------------------------------------------------------------+
+//  | View recently played                                                   |
+//  +------------------------------------------------------------------------+
+function viewRecentlyPlayed() {
+	global $cfg, $db;
+	global $base_size, $spaces, $scroll_bar_correction;
+	
+	authenticate('access_media');
+	$type = (get('type') ? get('type') : '');
+	
+	// formattedNavigator
+	$nav			= array();
+	$nav['name'][]	= 'Library';
+	$nav['url'][]	= 'index.php';
+	if ($type=='day') {
+		$nav['name'][]	= 'Recently played albums - day by day';
+	}
+	else {
+		$nav['name'][]	= 'Recently played albums';
+	}
+	require_once('include/header.inc.php');
+
+	$i = 0;
+	$tsStart = get('tsStart');
+	$tsEnd = get('tsEnd');
+	if (isSet($tsStart) && isSet($tsEnd)) {
+		$where = 'album_add_time <= ' . $tsEnd . ' AND album_add_time >= ' . $tsStart;
+	}
+	$page = (get('page') ? get('page') : 1);
+	$max_item_per_page = $cfg['max_items_per_page'];
+	
+	if ($type == 'day') {
+	$query_rp = mysqli_query($db, '
+		SELECT a.album_id, a.image_id, a.album, a.artist_alphabetic, counter.time as played_time
+		FROM counter JOIN (SELECT album_id, image_id, album, artist_alphabetic FROM album) as a on a.album_id = counter.album_id ORDER BY played_time DESC
+		' );
+	}
+	else {
+	$query_rp = mysqli_query($db, '
+		SELECT DISTINCT album.album_id, album.image_id, album.album, album.artist_alphabetic, c.m_time as played_time
+		FROM album RIGHT JOIN 
+		(SELECT album_id, MAX(time) AS m_time FROM counter GROUP BY album_id) as c
+		ON c.album_id = album.album_id
+		ORDER BY c.m_time DESC
+		' );
+	}
+		$album_multidisc = albumMultidisc($query_rp, 'rp');
+?>
+
+
+<h1>
+<a href="index.php?action=viewRecentlyPlayed" <?php if($type=='') echo 'class="sort_selected"' ?>>Recently played albums</a>&nbsp;&nbsp;<a href="index.php?action=viewRecentlyPlayed&type=day" <?php if($type=='day') echo ' class="sort_selected"' ?>>Day by day</a>
+</h1>
+
+
+<div class="albums_container">
+<?php
+	
+	if ($tileSizePHP) $size = $tileSizePHP;
+	$prevDate = '';
+	$currDate = '';
+	foreach (array_slice($album_multidisc,($page - 1) * $max_item_per_page,$max_item_per_page) as $album_m) {
+		$ts = $album_m['played_time'];
+		$currDate = date('Y.m.d', $ts);
+		//$start = mktime(0,0,0,$m,$d,$y);
+		if ($currDate <> $prevDate && $type == 'day') {
+			echo '<div class="decade">' . $currDate . ' - ' . date("l", ($ts)) . '</div>';
+		}
+		draw_tile($size,$album_m,'allDiscs');
+		$prevDate = $currDate;
+	}
+?>
+</div>
+
+<table cellspacing="0" cellpadding="0" class="border">
+
+<tr class="<?php echo $class; ?> smallspace"><td colspan="<?php echo $colombs + 2; ?>"></td></tr>
+<tr class="line"><td colspan="<?php echo $colombs + 2; ?>"></td></tr>
+<?php
+	//$query = mysqli_query($db, 'SELECT artist FROM album ' . $filter_query . ' GROUP BY artist');
+	if (mysqli_num_rows($query_rp) < 2) {
+		$album = mysqli_fetch_assoc($query_rp);
+		if ($album['artist'] == '') $album['artist'] = $artist;
+		$query_rp = mysqli_query($db, 'SELECT album_id from track where artist = "' .  mysqli_real_escape_string($db,$album['artist']) . '"');
+		$tracks = mysqli_num_rows($query_rp);
+?>
+
+<tr class="footer">
+	<td></td>
+	<td colspan="<?php echo $colombs; ?>"><a href="index.php?action=view3all&amp;artist=<?php echo rawurlencode($album['artist']); ?>&amp;order=title">View all tracks from <?php echo html($album['artist']); ?> 
+	<!-- <?php echo $tracks . (($tracks == 1) ? ' track from ' : ' tracks from ') . html($album['artist']); ?> -->
+	</a></td>
+	<td></td>
+</tr>
+<?php
+	} ?>
+
+</table>
+
+
+<?php
+	
+	require_once('include/footer.inc.php');
+}
+
+
+
+
 ?>

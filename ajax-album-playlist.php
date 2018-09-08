@@ -58,7 +58,7 @@ for ($disc; $disc <= $max_disc; $disc++) {
 	}
 	
 	
-	$query = mysqli_query($db,'SELECT track.track_artist, track.artist, track.title, track.featuring, track.miliseconds, track.track_id, track.number, track.relative_file, track.genre, f.blacklist_pos as blacklist_pos, f. favorite_pos as favorite_pos
+	$query = mysqli_query($db,'SELECT track.track_artist, track.artist, track.title, track.featuring, track.dr, track.miliseconds, track.track_id, track.number, track.relative_file, track.genre, f.blacklist_pos as blacklist_pos, f. favorite_pos as favorite_pos
 	FROM track left join 
 		(
 		SELECT favoriteitem.track_id as track_id, b.position as blacklist_pos, f.position as favorite_pos
@@ -108,7 +108,10 @@ for ($disc; $disc <= $max_disc; $disc++) {
 				<td class="textspace track-list-artist"></td>
 				<td class="time pl-genre"><?php if ($showGenre) echo'Genre'; ?></td>
 				<td></td>
-				<td align="right" class="time">Time</td>
+				<?php if ($cfg['show_DR']){ ?>
+				<td class="time pl-tdr">DR</td>
+				<?php } ?>
+				<td align="right" class="time time_w">Time</td>
 				<td class="space right"><div class="space"></div></td>
 			</tr>
 		<?php
@@ -190,7 +193,15 @@ for ($disc; $disc <= $max_disc; $disc++) {
 					<i class="fa fa-star<?php if (!$isFavorite) echo '-o'; ?> fa-fw" id="favorite_star-<?php echo $tid; ?>"></i>
 					</span>
 				</td>
-				
+				<?php if ($cfg['show_DR']){ ?>
+				<td class="pl-tdr">
+				<?php
+					$tdr = ($track['dr'] === NULL ? '-' : $track['dr']);
+					echo $tdr;
+				?>
+				</td>
+				<?php } ?>
+
 				<td align="right"><?php echo formattedTime($track['miliseconds']); ?></td>
 				<td></td>
 			</tr>
