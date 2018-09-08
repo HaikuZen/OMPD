@@ -30,7 +30,7 @@
 //  | MySQL configuration                                                    |
 //  +------------------------------------------------------------------------+
 $cfg['mysqli_host']                 = '192.168.1.251';
-$cfg['mysqli_db']                   = 'ompd2';
+$cfg['mysqli_db']                   = 'ompd2_bck';
 $cfg['mysqli_user']                 = 'kodi';
 $cfg['mysqli_password']             = 'kodi';
 $cfg['mysqli_port']                 = '3306';

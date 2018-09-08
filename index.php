@@ -62,11 +62,8 @@ elseif	($action == 'viewGenre')			viewGenre();
 elseif	($action == 'viewDR')			viewDR();
 elseif	($action == 'viewNew')			viewNew();
 elseif	($action == 'viewPopular')		viewPopular();
-<<<<<<< HEAD
 elseif	($action == 'Report')			Report();
-=======
 elseif	($action == 'viewRecentlyPlayed')		viewRecentlyPlayed();
->>>>>>> 7fe95555bc96a96189f44f06ea93c0ee31d74d1a
 else	message(__FILE__, __LINE__, 'error', '[b]Unsupported input value for[/b][br]action');
 exit();
 
