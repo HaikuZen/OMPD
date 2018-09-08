@@ -2117,7 +2117,7 @@ h1 {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  width: 100%;
+  width: 65%;
 }
 #miniplayer {
   position: fixed;

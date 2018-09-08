@@ -260,7 +260,7 @@ function update($dir_to_update = '') {
 		
 		
 		
-		mpdUpdate($rel_file_mpd);
+		//mpdUpdate($rel_file_mpd);
 		
 		//exit();
 		

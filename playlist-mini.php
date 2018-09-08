@@ -1,10 +1,10 @@
 <?php
 //  +------------------------------------------------------------------------+
-//  | O!MPD, Copyright © 2015-2018 Artur Sierzant                            |
+//  | O!MPD, Copyright ï¿½ 2015-2018 Artur Sierzant                            |
 //  | http://www.ompd.pl                                                     |
 //  |                                                                        |
 //  |                                                                        |
-//  | netjukebox, Copyright © 2001-2012 Willem Bartels                       |
+//  | netjukebox, Copyright ï¿½ 2001-2012 Willem Bartels                       |
 //  |                                                                        |
 //  | http://www.netjukebox.nl                                               |
 //  | http://forum.netjukebox.nl                                             |
@@ -221,6 +221,7 @@ function evaluateTrackVersion(data) {
 
 function evaluateTrack(data) {
 	// data.artist, data.title, data.album, data.by, data.album_id, data.image_id
+	console.log('evaluateTrack:'+data.artist +", " + data.title +", " + data.album +", " + data.by +", " + data.album_id +", "+data.image_id);
 	current_track_id = data.track_id;
 	if (previous_track_id != data.track_id && data.track_id != null) {
 		$('#track_title_mini').removeClass('icon-anchor');

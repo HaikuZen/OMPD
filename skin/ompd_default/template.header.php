@@ -708,7 +708,10 @@ $query2 = mysqli_query($db,'SELECT player_name, player_type, player_id FROM play
 	//$header['menu'] .= "\t" . $header['seperation'];
 	$header['menu'] .= '<a href="index.php?action=viewRandomAlbum&amp;order=artist">random</a>' . $header['seperation'];
 	$header['menu'] .= '<a href="browser.php">files</a>' . $header['seperation'];
-	$header['menu'] .= '<a href="index.php?action=viewDR">DR</a>';
+	$header['menu'] .= '<a href="index.php?action=viewDR">DR</a>'. $header['seperation'];
+	//JANUS -->
+	$header['menu'] .= "\t" . '<a href="index.php?action=Report&page=1">Artist/Album</a>';
+	//<-- JANUS
 	echo $header['menu'];
 ?>
 

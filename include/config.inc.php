@@ -29,10 +29,10 @@
 //  +------------------------------------------------------------------------+
 //  | MySQL configuration                                                    |
 //  +------------------------------------------------------------------------+
-$cfg['mysqli_host']                 = '127.0.0.1';
-$cfg['mysqli_db']                   = 'ompd';
-$cfg['mysqli_user']                 = '';
-$cfg['mysqli_password']             = '';
+$cfg['mysqli_host']                 = '192.168.1.251';
+$cfg['mysqli_db']                   = 'ompd2';
+$cfg['mysqli_user']                 = 'kodi';
+$cfg['mysqli_password']             = 'kodi';
 $cfg['mysqli_port']                 = '3306';
 $cfg['mysqli_socket']               = '';
 $cfg['mysqli_auto_create_db']       = true;
@@ -49,7 +49,7 @@ $cfg['mysqli_auto_create_db']       = true;
 //  | Linux/Unix/OSX: '/var/mpd/music/';                                     |
 //  +------------------------------------------------------------------------+
 
-$cfg['media_dir']                   = '/share/HDA_DATA/ompd/';
+$cfg['media_dir']                   = '/var/lib/mpd/music/';
 
 
 
@@ -111,7 +111,7 @@ $cfg['show_discography_browser'] = true;
 //  | Show miniplayer at bottom of every the page                            |
 //  +------------------------------------------------------------------------+
 
-$cfg['show_miniplayer']					= true;
+$cfg['show_miniplayer']					= false;
 
 
 
@@ -438,7 +438,12 @@ $cfg['artist_separator'][] = 	" ft. ";
 //  | Quick search                                                           |
 //  +------------------------------------------------------------------------+
 unset($cfg['quick_search']);
-
+$cfg['quick_search'][1] = array("Italian Artists","relative_file LIKE '%Italian%'");
+$cfg['quick_search'][2] = array("Jazz","relative_file LIKE '%Jazz%'");
+$cfg['quick_search'][3] = array("Misc","relative_file LIKE '%Misc%'");
+$cfg['quick_search'][4] = array("HiRes","relative_file LIKE '%HiRes%'");
+$cfg['quick_search'][5] = array("Classical","relative_file LIKE '%Classical%'");
+/*
 $cfg['quick_search'][1] = array("Polish Artists","comment LIKE '%polish%'");
 $cfg['quick_search'][2] = array("Female voices","comment LIKE '%ladies%'");
 $cfg['quick_search'][3] = array("Live Concerts","comment LIKE '%live%'");
@@ -447,7 +452,7 @@ $cfg['quick_search'][5] = array("HD Audio","audio_bits_per_sample > 16 OR audio_
 $cfg['quick_search'][6] = array("Japanese Editions","album LIKE '%japan%' OR comment LIKE '%SHM-CD%'");
 $cfg['quick_search'][7] = array("Pop of the 80's","genre ='Pop' and ((album.year BETWEEN 1980 AND 1989) or comment like '%80s%')");
 $cfg['quick_search'][8] = array("AOR","comment like '%AOR%'");
-
+*/
 
 
 
@@ -1063,7 +1068,7 @@ $cfg['php_info']                    = true;
 //  | For testing some stuff (on my system only) - should be set to off      |
 //  +------------------------------------------------------------------------+
 
-$cfg['testing']				              = 'off';
+$cfg['testing']				              = 'on';
 
 
 

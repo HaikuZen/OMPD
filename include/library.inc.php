@@ -49,6 +49,25 @@ function draw_tile($size,$album,$multidisc = '') {
 		echo '</div>';
 }
 
+function draw_report_tile($size,$album) {
+	global $cfg;
+	
+	//echo '<div title="Go to album" style="display: table; float:left; width:100%;">';
+	echo '<div style="display: table-cell; vertical-align:top; width:30%;">';
+	echo '<span style="word-wrap:break-word; white-space: normal; font-size: 0.85em;">';
+	echo html($album['album']) . ' &nbsp; (' . $album['year'] . ')';
+	echo '</span>';
+	echo '<span style="word-wrap:break-word; white-space: normal; font-size: 0.5em;">'; 
+	echo ' {' . $album['audio_dataformat'] . '-' . $album['audio_bits_per_sample'] . '} '; 
+	echo '</span>'; 
+	echo '</div>';
+	echo '<div style="display: table-cell; vertical-align:middle;">';
+	echo '<img style="cursor:pointer; width:100px; height;100px" onclick=\'location.href="index.php?action=view3&amp;album_id=' . $album['album_id'] . '"\' src="image.php?image_id=' . $album['image_id'] . '" alt="">';
+	//echo '</div>';
+	//echo '<div style="display: table-cell; vertical-align:bottom; width:15%;">'; 
+	echo '</div>';
+	
+}
 
 //  +---------------------------------------------------------------------------+
 //  | getInbetweenStrings by https://stackoverflow.com/users/520896/ravi-verma  |

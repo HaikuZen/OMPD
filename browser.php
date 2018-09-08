@@ -1,10 +1,10 @@
 <?php
 //  +------------------------------------------------------------------------+
-//  | O!MPD, Copyright © 2015-2018 Artur Sierzant                            |
+//  | O!MPD, Copyright ï¿½ 2015-2018 Artur Sierzant                            |
 //  | http://www.ompd.pl                                                     |
 //  |                                                                        |
 //  |                                                                        |
-//  | netjukebox, Copyright © 2001-2012 Willem Bartels                       |
+//  | netjukebox, Copyright ï¿½ 2001-2012 Willem Bartels                       |
 //  |                                                                        |
 //  | http://www.netjukebox.nl                                               |
 //  | http://forum.netjukebox.nl                                             |
@@ -23,7 +23,7 @@
 //  | along with this program.  If not, see <http://www.gnu.org/licenses/>.  |
 //  +------------------------------------------------------------------------+
 
-/* (c) 2004 by £ukasz Tomicki <tomicki(at)o2(dot)pl> 		*/
+/* (c) 2004 by ï¿½ukasz Tomicki <tomicki(at)o2(dot)pl> 		*/
 /* Most recent version available @ : http://tomicki.net/	*/
 /* Version: 0.8    											*/
 /*
@@ -62,6 +62,12 @@ require_once('include/play.inc.php');
 error_reporting(-1);
 @ini_set('display_errors', 0);
 
+function cmp($a, $b) {
+	//cliLog("cmp => (" . $a['data'] . ") -" . $a['ft'] . "-(" . $b['data'] . ") " . $b['ft']);
+	if ($a['ft'] == $b['ft'])
+		return 0;
+	return ($a['ft'] > $b['ft']) ? -1 : 1;
+}
 
 function sortRows($data)
 {
@@ -252,28 +258,33 @@ if (is_dir($dir) || $dir == '') {
 		if ($dir == '/') $topdir = '/';
 		$i = 0;
 		while ($files[] = readdir($handle)); 
-		natcasesort($files);
+		//natcasesort($files);
 		closedir($handle);
 		foreach ($files as $file) {
 			if ($file != "." && $file != ".." && $file) {
+				$ft = filemtime(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file);
 				if (ctype_alnum(substr($file,0,1))) {
 					if (is_dir(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file)) {
 						$rows[$i]['data'] = iconv(NJB_DEFAULT_FILESYSTEM_CHARSET, 'UTF-8', $file);
 						$rows[$i]['dir'] = is_dir(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file);
+						$rows[$i]['ft'] = $ft;
 					}
 					else {
 						$rows_f[$i]['data'] = iconv(NJB_DEFAULT_FILESYSTEM_CHARSET, 'UTF-8', $file);
 						$rows_f[$i]['dir'] = is_dir(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file);
+						$rows[$i]['ft'] = $ft;
 					}
 				}
 				else {
 					if (is_dir(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file)) {
 						$rows_non_alphanumeric[$i]['data'] = iconv(NJB_DEFAULT_FILESYSTEM_CHARSET, 'UTF-8', $file);
 						$rows_non_alphanumeric[$i]['dir'] = is_dir(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file);
+						$rows_non_alphanumeric[$i]['ft'] = $ft;
 					}
 					else {
 						$rows_f_non_alphanumeric[$i]['data'] = iconv(NJB_DEFAULT_FILESYSTEM_CHARSET, 'UTF-8', $file);
 						$rows_f_non_alphanumeric[$i]['dir'] = is_dir(iconv('UTF-8', NJB_DEFAULT_FILESYSTEM_CHARSET, $dir) . "/" . $file);
+						$rows_f_non_alphanumeric[$i]['ft'] = $ft;
 					}
 				}
 				$i++;
@@ -282,7 +293,8 @@ if (is_dir($dir) || $dir == '') {
 		}
 		$rows = array_merge($rows_non_alphanumeric, $rows, $rows_f_non_alphanumeric, $rows_f);
 	}
-
+	cliLog("sort started");
+	usort($rows, "cmp");
 	$size = count($rows);
 	//$rows = sortRows($rows);
 	//echo print_r($rows);
@@ -375,12 +387,15 @@ if (is_dir($dir) || $dir == '') {
 				echo "<a href='" . $self . "?" . $showSelectQS . "dir=" . rawurlencode($topdir) . "'>" . $rows[$i]['data'] . "</a>\n";
 				echo '';
 				echo "</td>";
-				echo "<td>";
+				//echo "<td>";
 				//echo filesize($topdir);
-				echo "</td>";
-				echo "<td>    ";
+				//echo "</td>";
+				//echo "<td>    ";
 				//echo "<a href='", substr($topdir, $size_document_root,  strlen($topdir) - $size_document_root), "'>open ", $file_type, "</a>\n";
-				echo "</td>";
+				//echo "</td>";
+				$ft=$rows[$i]['ft']; 
+				echo "<td class='fa'>" . date("d FÂ YÂ H.i", $ft ) ."</td>"; 
+				
 				echo "</tr>";
 				?>
 				<tr>

@@ -61,6 +61,7 @@ elseif	($action == 'viewYear')			viewYear();
 elseif	($action == 'viewDR')			viewDR();
 elseif	($action == 'viewNew')			viewNew();
 elseif	($action == 'viewPopular')		viewPopular();
+elseif	($action == 'Report')			Report();
 else	message(__FILE__, __LINE__, 'error', '[b]Unsupported input value for[/b][br]action');
 exit();
 
@@ -3162,6 +3163,90 @@ new albums <?php if (isset($addedOn)) echo ' added on ' . $addedOn; ?>
 }
 
 
+// JANUS -->
+//  +------------------------------------------------------------------------+
+//  | Report                                                             |
+//  +------------------------------------------------------------------------+
+function Report() {
+	global $cfg, $db;
+	global $base_size, $spaces, $scroll_bar_correction;
+	
+	authenticate('access_media');
+	
+	if ($cfg['debug']) {
+        	$logFile = NJB_HOME_DIR . 'tmp/update_log.txt';
+	        ini_set('log_errors', 'On');
+	}	
+	else {
+        	$logFile = '';
+	}	
+	// formattedNavigator
+	$nav		= array();
+	$nav['name'][]	= 'Library';
+	$nav['url'][]	= 'index.php';
+	$nav['name'][]	= 'Report';
+	
+	require_once('include/header.inc.php');
+
+	$i			= 0;
+	
+	$query = mysqli_query($db, 'SELECT COUNT(DISTINCT artist) AS counter FROM album ');
+
+	$items_count = mysqli_fetch_assoc($query);
+	
+	$cfg['items_count'] = $items_count['counter'];
+	$cfg['max_items_per_page']=$cfg['max_items_per_page'];	
+	$page = get('page');
+	$max_item_per_page = $cfg['max_items_per_page'];
+ 	$query_artists = mysqli_query($db, 'SELECT DISTINCT artist FROM album 
+              LIMIT ' . ($page - 1) * $max_item_per_page . ','  . ($max_item_per_page));
+?>
+
+
+<h1>
+Artist/Album
+</h1>
+
+
+<div style="display: table; background-color: #eaf4f7;">
+<?php
+	while($artist = mysqli_fetch_assoc($query_artists)) {
+		echo '<div style="float:left; display: table-cell; border: 0px solid blue; margin: 3px;">' ;
+			echo '<div style="display: table-cell; vertical-align: middle; width:280px;">';
+			echo '<span style="font-weight: bold; word-wrap:break-word; white-space: normal; width:75px;">' . $artist['artist'] . '</span>';
+			echo '</div>';
+		$artist = $artist['artist'];
+		$query = mysqli_query($db, 
+			'SELECT album.*, audio_bits_per_sample, audio_sample_rate, audio_dataformat, audio_lossless, audio_profile 
+			 FROM album INNER JOIN track ON album.album_id = track.album_id AND number=1
+			 WHERE album.artist="' . $artist . '"');
+		//echo '<div style="display: table-cell;">';
+		while ($album = mysqli_fetch_assoc($query)) {		
+			if ($album) {
+				echo '<div style="float:left; display: table-cell; float: left; width:280px;">' ; 
+				echo draw_report_tile($size,$album) ; 
+				echo '</div>';
+			}
+		}
+		echo '</div>';
+	} 
+?>
+</div>
+
+<table cellspacing="0" cellpadding="0" class="border">
+
+<tr class="<?php echo $class; ?> smallspace"><td colspan="<?php echo $colombs + 2; ?>"></td></tr>
+<tr class="line"><td colspan="<?php echo $colombs + 2; ?>"></td></tr>
+
+</table>
+
+
+<?php
+	
+	require_once('include/footer.inc.php');
+}
+
+// <-- JANUS
 
 
 //  +------------------------------------------------------------------------+
