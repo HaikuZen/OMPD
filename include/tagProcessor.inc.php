@@ -211,7 +211,31 @@ function postProcessDiscNumber($numberString) {
 }
 
 function parseYear($data) {
-    if (isset($data['comments']['year'][0])) {
+	//for FLAC:
+    if (isset($data['comments']['originalyear'][0])) {
+        return postProcessYear($data['comments']['originalyear'][0]);
+    }
+	if (isset($data['comments']['originaldate'][0])) {
+        return postProcessYear($data['comments']['originaldate'][0]);
+    }
+	if (isset($data['comments']['origyear'][0])) {
+        return postProcessYear($data['comments']['origyear'][0]);
+    }
+	//for mp3:
+	if(isset($data['tags']['id3v2']['text']['originalyear'])) {
+        return intval($data['tags']['id3v2']['text']['originalyear']);
+    }
+	if(isset($data['tags']['id3v2']['text']['ORIGINALYEAR'])) {
+        return intval($data['tags']['id3v2']['text']['ORIGINALYEAR']);
+    }
+	if (isset($data['comments']['original_year'][0])) {
+        return postProcessYear($data['comments']['original_year'][0]);
+    }
+	if (isset($data['comments']['original_release_time'][0])) {
+        return postProcessYear($data['comments']['original_release_time'][0]);
+    }
+	//common:
+	if (isset($data['comments']['year'][0])) {
         return postProcessYear($data['comments']['year'][0]);
     }
     if (isset($data['comments']['date'][0])) {
@@ -245,6 +269,14 @@ function parseComment($data) {
     }
     return '';
 }
+
+function parseComposer($data) {
+    if (isset($data['comments']['composer'][0])) {
+        return $data['comments']['composer'][0];
+    }
+    return '';
+}
+
 
 // TODO: this function is currently not used but removed from old fileInfo() code-mess
 // consider to make use of it within fileStructure() or whereelse needed
