@@ -552,7 +552,8 @@ function recursiveScan($dir) {
     //if ($db->affected_rows == 0) {
     if ((int)$m[0][0] == 0) {
         $album_id = ($album_id == '') ? base_convert(uniqid(), 16, 36) : $album_id;
-        $album_add_time = time();
+        //$album_add_time = time();
+        $album_add_time = filectime($cfg['media_dir'] . $rel_dir);
         $db->query("
             INSERT INTO album_id
                 (album_id, path, album_add_time, updated)

@@ -30,7 +30,7 @@
 //  | MySQL configuration                                                    |
 //  +------------------------------------------------------------------------+
 $cfg['mysqli_host']                 = '192.168.1.251';
-$cfg['mysqli_db']                   = 'ompd2_bck';
+$cfg['mysqli_db']                   = 'ompd2';
 $cfg['mysqli_user']                 = 'kodi';
 $cfg['mysqli_password']             = 'kodi';
 $cfg['mysqli_port']                 = '3306';
@@ -1068,7 +1068,7 @@ $cfg['offline_message']             = '[b]This site is temporarily unavailable.[
 //  | $cfg['php_info'] - displays 'PHP information' in 'Configuration'       |
 //  +------------------------------------------------------------------------+
 
-$cfg['debug']                       = false;
+$cfg['debug']                       = true;
 $cfg['debug_memory']                = false;
 $cfg['php_info']                    = true;
 
