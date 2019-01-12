@@ -66,6 +66,7 @@ elseif	($action == 'viewPopular')		viewPopular();
 elseif	($action == 'Report')			Report();
 elseif	($action == 'viewRecentlyPlayed')		viewRecentlyPlayed();
 elseif	($action == 'viewPlayedAtDay')			viewPlayedAtDay();
+elseif	($action == 'viewArtistAlbumOrder')		viewNew();
 else	message(__FILE__, __LINE__, 'error', '[b]Unsupported input value for[/b][br]action');
 exit();
 
@@ -238,8 +239,6 @@ function selectTab(obj) {
 <?php
 	require_once('include/footer.inc.php');
 }
-
-
 
 
 //  +------------------------------------------------------------------------+
@@ -3561,7 +3560,7 @@ if ($cfg['show_last_played'] == true) {
 	}
 } //last_played
 ?>
-<h1>&nbsp;New albums</h1>
+<h1>&nbsp;New albums&nbsp;<a href="index.php?action=viewArtistAlbumOrder">Artist/Album</a></h1>
 
 <div class="albums_container">
 <?php
@@ -3630,7 +3629,9 @@ function viewNew() {
 	$tsEnd = get('tsEnd');
 	$page = (get('page') ? get('page') : 1);
 	$max_item_per_page = $cfg['max_items_per_page'];
+	
 	$where = 'album_add_time';
+	
 	if (isSet($tsStart) && isSet($tsEnd)) {
 		$where = 'album_add_time <= ' . $tsEnd . ' AND album_add_time >= ' . $tsStart;
 	}
@@ -3640,13 +3641,21 @@ function viewNew() {
 		WHERE ' . $where . '
 		ORDER BY album
 		');
-	
+	if	($action == 'viewArtistAlbumOrder')
+		$album_multidisc = albumMultidisc($query, 'ar');
+	else
 		$album_multidisc = albumMultidisc($query);
 ?>
 
 
 <h1>
-new albums <?php if (isset($addedOn)) echo ' added on ' . $addedOn; ?>
+<?php
+	if	($action == 'viewArtistAlbumOrder')
+		echo 'Artist/Album';
+	else
+		echo 'new album';
+	if (isset($addedOn)) echo ' added on ' . $addedOn; 
+?>
 </h1>
 
 
@@ -3654,7 +3663,10 @@ new albums <?php if (isset($addedOn)) echo ' added on ' . $addedOn; ?>
 <?php
 	
 	if ($tileSizePHP) $size = $tileSizePHP;
-	krsort($album_multidisc);
+	if	($action == 'viewArtistAlbumOrder')
+		ksort($album_multidisc);
+	else
+		krsort($album_multidisc);
 	foreach (array_slice($album_multidisc,($page - 1) * $max_item_per_page,$max_item_per_page) as $album_m) {
 		draw_tile($size,$album_m,'allDiscs');
 		
@@ -4055,6 +4067,59 @@ function viewRecentlyPlayed() {
 
 </table>
 
+
+<?php
+	
+	require_once('include/footer.inc.php');
+}
+
+
+//  +------------------------------------------------------------------------+
+//  | View played at given day                                               |
+//  +------------------------------------------------------------------------+
+function viewPlayedAtDay() {
+	global $cfg, $db;
+	global $base_size, $spaces, $scroll_bar_correction;
+	
+	authenticate('access_media');
+	$type = (get('type') ? get('type') : '');
+	$day = (get('day') ? get('day') : '');
+	$ts = strtotime($day);
+	// formattedNavigator
+	$nav			= array();
+	$nav['name'][]	= 'Library';
+	$nav['url'][]	= 'index.php';
+	$nav['name'][]	= 'Albums played at ' . $day;
+	require_once('include/header.inc.php');
+	
+	$beginOfDay = strtotime("midnight", $ts);
+	$endOfDay   = strtotime("tomorrow", $beginOfDay) - 1;
+	$i = 0;
+	$page = (get('page') ? get('page') : 1);
+	$max_item_per_page = $cfg['max_items_per_page'];
+	
+	
+	$query_rp = mysqli_query($db, '
+		SELECT a.album_id, a.image_id, a.album, a.artist_alphabetic, counter.time as played_time
+		FROM counter JOIN (SELECT album_id, image_id, album, artist_alphabetic FROM album) as a on a.album_id = counter.album_id WHERE counter.time > ' . $beginOfDay . ' AND counter.time < ' . $endOfDay . ' ORDER BY played_time DESC
+		' );
+	
+	$album_multidisc = albumMultidisc($query_rp, 'rp');
+?>
+
+
+
+<div class="albums_container">
+<?php
+	
+	if ($tileSizePHP) $size = $tileSizePHP;
+	$prevDate = '';
+	$currDate = '';
+	foreach (array_slice($album_multidisc,($page - 1) * $max_item_per_page,$max_item_per_page) as $album_m) {
+		draw_tile($size,$album_m,'allDiscs');
+	}
+?>
+</div>
 
 <?php
 	

@@ -1459,8 +1459,17 @@ function albumMultidisc($query, $rp =''){
 						'allDiscs' => '',
 						'played_time' => $album['played_time']
 						);
-				}
-				else {
+				} elseif ($rp == 'ar') {
+					$album_multidisc[$album['artist'] . '_' . $album['album_id']] = array(
+						'album_id' => $album['album_id'],
+						'image_id' => $album['image_id'],
+						'album' => $album['album'],
+						'artist_alphabetic' => $album['artist_alphabetic'],
+						'year' => $album['year'],
+						'genre_id' => $album['genre_id'],
+						'allDiscs' => ''
+						);
+				} else {
 					$album_multidisc[$album['album_add_time'] . '_' . $album['album_id']] = array(
 						'album_id' => $album['album_id'],
 						'image_id' => $album['image_id'],

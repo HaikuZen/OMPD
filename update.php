@@ -50,7 +50,9 @@ $dir_to_update = getpost('dir_to_update');
 cliLog('dir_to_update from URL: ' . $dir_to_update);
 
 if (!isset($dir_to_update)) {
-	$dir_to_update = '';
+		//$dir_to_update = '';
+		//message(__FILE__, __LINE__, 'error', '[b]dir_to_update not set[/b][br]'.$dir_to_update);
+		exit();
 }
 else {
 	$dir_to_update = myDecode($dir_to_update);
@@ -240,7 +242,8 @@ function update($dir_to_update = '') {
 		
 		//redirect back to update.php to use ajax status update 
 		$cfg['footer'] = 'close';	
-		echo ('<script>window.location.href="update.php?action=update&sign=' . $cfg['sign'] . '"</script>');
+		//echo ('<script>window.location.href="update.php?action=update&sign=' . $cfg['sign'] . '"</script>');
+		//echo ('<script>window.alert(["'.$update_status.'"])</script>');
 		
 		@ob_flush();
 		flush();

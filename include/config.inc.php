@@ -158,8 +158,8 @@ $cfg['VA'][]           = 'Różni wykonawcy';
 //  | albums into one in search results                                      |
 //  +------------------------------------------------------------------------+
 
-$cfg['show_multidisc'] = true;
-$cfg['group_multidisc'] = true;
+$cfg['show_multidisc'] = false;
+$cfg['group_multidisc'] = false;
 
 
 
