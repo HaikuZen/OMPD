@@ -64,6 +64,7 @@ elseif	($action == 'viewComposer')		viewComposer();
 elseif	($action == 'viewNew')			viewNew();
 elseif	($action == 'viewPopular')		viewPopular();
 elseif	($action == 'Report')			Report();
+elseif	($action == 'delete')			delete();
 elseif	($action == 'viewRecentlyPlayed')		viewRecentlyPlayed();
 elseif	($action == 'viewPlayedAtDay')			viewPlayedAtDay();
 elseif	($action == 'viewArtistAlbumOrder')		viewNew();
@@ -240,6 +241,49 @@ function selectTab(obj) {
 	require_once('include/footer.inc.php');
 }
 
+//  +------------------------------------------------------------------------+
+//  | delete                                                                 |
+//  +------------------------------------------------------------------------+
+function delete() {
+	global $cfg, $db;
+	
+	$album_id = get('album_id');
+	require_once('include/header.inc.php');
+
+	if ($album_id == '') {
+		message(__FILE__, __LINE__, 'error', '[b]Album not found in database.[/b]');
+		exit;
+	}
+	$msg ="";
+	authenticate('access_media');
+	if(mysqli_query($db, 'delete from bitmap where album_id="' . $album_id . '"'))
+		$msg = "Bitmap ";
+	else {
+		message(__FILE__, __LINE__, 'error', mysqli_error($conn));
+		exit;
+	}
+	
+	if(mysqli_query($db, 'delete from track where album_id="' . $album_id . '"'))
+		$msg = $msg . "Track ";
+	else {
+		message(__FILE__, __LINE__, 'error', mysqli_error($conn));
+		exit;
+	}
+	if(mysqli_query($db, 'delete from album where album_id="' . $album_id . '"'))
+		$msg = $msg ."Track ";
+	else {
+		message(__FILE__, __LINE__, 'error', mysqli_error($conn));
+		exit;
+	}
+	if(mysqli_query($db, 'delete from album_id where album_id="' . $album_id . '"'))
+		$msg = $msg ."AlbumId ";
+	else {
+		message(__FILE__, __LINE__, 'error', mysqli_error($conn));
+		exit;
+	}
+	message(__FILE__, __LINE__, 'info', '[b] Deleted Album '.$album_id.'[/b]');
+	require_once('include/footer.inc.php');
+}
 
 //  +------------------------------------------------------------------------+
 //  | View 1                                                                 |
@@ -1590,8 +1634,6 @@ if ($resultsFound == false && $group_found == 'none') echo 'No results found.';
 }
 
 
-
-
 //  +------------------------------------------------------------------------+
 //  | View 3                                                                 |
 //  +------------------------------------------------------------------------+
@@ -1760,6 +1802,7 @@ function view3() {
 	if ($cfg['access_admin']){
 		$dir_path = rawurlencode(dirname($cfg['media_dir'] . $rel_file['relative_file']));
 		$basic[] = '<a href="update.php?action=update&amp;dir_to_update=' . $dir_path . '/&amp;sign=' . $cfg['sign'] . '"><i class="fa fa-fw fa-refresh fa-fw icon-small"></i>Update album</a>';
+		$basic[] = '<a href="index.php?action=delete&amp;album_id=' . $album_id . '&amp;sign=' . $cfg['sign'] . '"><i class="fa fa-fw fa-trash fa-fw icon-small"></i>Delete album</a>';
 	}
 	if ($cfg['access_admin'] && $cfg['album_share_stream'])
 		$basic[] = '<a href="stream.php?action=shareAlbum&amp;album_id='. $album_id . '&amp;sign=' . $cfg['sign'] . '"><i class="fa fa-fw  fa-share-square-o  icon-small"></i>Share stream</a>';
