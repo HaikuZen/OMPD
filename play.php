@@ -1,10 +1,10 @@
 <?php
 //  +------------------------------------------------------------------------+
-//  | O!MPD, Copyright © 2015-2018 Artur Sierzant                            |
+//  | O!MPD, Copyright ï¿½ 2015-2018 Artur Sierzant                            |
 //  | http://www.ompd.pl                                                     |
 //  |                                                                        |
 //  |                                                                        |
-//  | netjukebox, Copyright © 2001-2012 Willem Bartels                       |
+//  | netjukebox, Copyright ï¿½ 2001-2012 Willem Bartels                       |
 //  |                                                                        |
 //  | http://www.netjukebox.nl                                               |
 //  | http://forum.netjukebox.nl                                             |
@@ -694,12 +694,13 @@ function addTracks($mode = 'play', $insPos = '', $playAfterInsert = '', $track_i
 		if (mysqli_fetch_row($query)) {	
 			playStream($favorite_id);
 		}
-		
+		/*
 		$query	= mysqli_query($db,'SELECT relative_file, track.track_id
 			FROM track, favoriteitem
 			WHERE favoriteitem.track_id = track.track_id 
 			AND favorite_id = "' . mysqli_real_escape_string($db,$favorite_id) . '"
 			ORDER BY position');
+		*/
 	}
 	elseif ($random == 'database') {
 		$query = mysqli_query($db,'SELECT relative_file
